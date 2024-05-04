@@ -52,6 +52,7 @@ const List = ({ cards, listID, title, cardChangeHandler }: Props) => {
             title={c.title}
           />
         ))}
+        <div className={styles.dropText}>Drop here</div>
       </div>
     </div>
   );
