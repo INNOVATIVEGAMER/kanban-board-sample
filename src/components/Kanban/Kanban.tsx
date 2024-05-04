@@ -88,6 +88,19 @@ const Kanban = () => {
     e.currentTarget.reset();
   };
 
+  const handleDeleteCard = (cardId: string, currentlistID: listIDs) => {
+    const remainList = data[currentlistID]
+      .filter((item) => item.id !== cardId)
+      .sort((a, b) => a.order - b.order)
+      .map((item, i) => {
+        return { ...item, order: i + 1 };
+      });
+
+    setData((d) => {
+      return { ...d, [currentlistID]: remainList };
+    });
+  };
+
   const cardChangeHandler = (
     cardInfo: card,
     newListId: listIDs,
@@ -161,6 +174,7 @@ const Kanban = () => {
             title={l.title}
             listID={l.listID}
             cardChangeHandler={cardChangeHandler}
+            handleDeleteCard={handleDeleteCard}
           />
 
           <form className={styles.add} onSubmit={handleAddCard} id={l.listID}>

@@ -12,9 +12,16 @@ type Props = {
     newListId: listIDs,
     targetCardId: string
   ) => void;
+  handleDeleteCard: (cardId: string, currentlistID: listIDs) => void;
 };
 
-const List = ({ cards, listID, title, cardChangeHandler }: Props) => {
+const List = ({
+  cards,
+  listID,
+  title,
+  cardChangeHandler,
+  handleDeleteCard,
+}: Props) => {
   const sortedCards = cards.sort((a, b) => a.order - b.order);
 
   const onDragEnterHandler = (e: DragEvent<HTMLDivElement>) => {
@@ -50,6 +57,7 @@ const List = ({ cards, listID, title, cardChangeHandler }: Props) => {
             id={c.id}
             listID={listID}
             title={c.title}
+            handleDeleteCard={handleDeleteCard}
           />
         ))}
         <div className={styles.dropText}>Drop here</div>

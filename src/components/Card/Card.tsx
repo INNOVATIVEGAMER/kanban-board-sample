@@ -6,9 +6,10 @@ type Props = {
   id: string;
   title: string;
   listID: listIDs;
+  handleDeleteCard: (cardId: string, currentlistID: listIDs) => void;
 };
 
-const Card = ({ id, listID, title }: Props) => {
+const Card = ({ id, listID, title, handleDeleteCard }: Props) => {
   const [onHold, setOnHold] = useState(false);
 
   const dragStartHandler = (e: DragEvent<HTMLDivElement>) => {
@@ -31,6 +32,12 @@ const Card = ({ id, listID, title }: Props) => {
       onDragEnd={dragEndHandler}
     >
       <h5>{title}</h5>
+      <button
+        className={styles.delete}
+        onClick={() => handleDeleteCard(id, listID)}
+      >
+        Delete
+      </button>
     </div>
   );
 };
