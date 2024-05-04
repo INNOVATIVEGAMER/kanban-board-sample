@@ -63,7 +63,7 @@ const Kanban = () => {
       .map((item) => item.order)
       .reduce((maxValue, a) => Math.max(maxValue, a), 0);
     const cardInfo: card = {
-      id: "abc" + cardTitle,
+      id: Date() + cardTitle,
       listID: currentListId,
       title: cardTitle,
       order: newListOrderValueMax + 1,
