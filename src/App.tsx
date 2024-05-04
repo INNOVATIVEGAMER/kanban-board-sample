@@ -1,5 +1,11 @@
+import Kanban from "./components/Kanban/Kanban";
+
 function App() {
-  return <div>app</div>;
+  return (
+    <div>
+      <Kanban />
+    </div>
+  );
 }
 
 export default App;
