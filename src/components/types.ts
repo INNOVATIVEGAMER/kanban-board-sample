@@ -7,6 +7,6 @@ export type list = {
 export type card = {
   id: string;
   title: string;
-  listId: listIDs;
+  listID: listIDs;
   order: number;
 };

@@ -22,19 +22,19 @@ const initialData: data = {
     {
       id: "abc1",
       title: "Card 1",
-      listId: "list1",
+      listID: "list1",
       order: 1,
     },
     {
       id: "abc2",
       title: "Card 3",
-      listId: "list1",
+      listID: "list1",
       order: 2,
     },
     {
       id: "abc3",
       title: "Card 5",
-      listId: "list1",
+      listID: "list1",
       order: 3,
     },
   ],
@@ -42,7 +42,7 @@ const initialData: data = {
     {
       id: "abc4",
       title: "Card 2",
-      listId: "list2",
+      listID: "list2",
       order: 1,
     },
   ],
@@ -51,10 +51,81 @@ const initialData: data = {
 const Kanban = () => {
   const [data, setData] = useState(initialData);
 
+  const cardChangeHandler = (
+    cardInfo: card,
+    newListId: listIDs,
+    targetCardId: string
+  ) => {
+    const { id, listID: oldListId } = cardInfo;
+    const dropCard = data[oldListId].find((el) => el.id === id);
+    if (!dropCard) return;
+
+    const targetCard =
+      targetCardId !== ""
+        ? data[newListId].find((el) => el.id === targetCardId)
+        : null;
+
+    const newListOrderValueMax = data[newListId]
+      .map((item) => item.order)
+      .reduce((maxValue, a) => Math.max(maxValue, a), 0);
+
+    if (oldListId === newListId) {
+      const newList = data[oldListId]
+        .map((item) => {
+          if (item.id === dropCard.id)
+            return {
+              ...dropCard,
+              order: targetCard
+                ? targetCard.order - 1
+                : newListOrderValueMax + 1,
+            };
+          return item;
+        })
+        .sort((a, b) => a.order - b.order)
+        .map((item, i) => {
+          return { ...item, order: i + 1 };
+        });
+      setData((d) => {
+        return { ...d, [oldListId]: newList };
+      });
+
+      return;
+    }
+
+    const remainList = data[oldListId]
+      .filter((item) => item.id !== id)
+      .sort((a, b) => a.order - b.order)
+      .map((item, i) => {
+        return { ...item, order: i + 1 };
+      });
+
+    const addedList = [
+      ...data[newListId],
+      {
+        ...dropCard,
+        order: targetCard ? targetCard.order - 1 : newListOrderValueMax + 1,
+      },
+    ]
+      .sort((a, b) => a.order - b.order)
+      .map((item, i) => {
+        return { ...item, order: i + 1 };
+      });
+    setData((d) => {
+      return { ...d, [oldListId]: remainList, [newListId]: addedList };
+    });
+  };
+
   return (
     <div className={styles.wrapper}>
       {lists.map((l) => (
-        <List cards={data[l.listID]} title={l.title} listID={l.listID} />
+        <div key={l.listID}>
+          <List
+            cards={data[l.listID]}
+            title={l.title}
+            listID={l.listID}
+            cardChangeHandler={cardChangeHandler}
+          />
+        </div>
       ))}
     </div>
   );
