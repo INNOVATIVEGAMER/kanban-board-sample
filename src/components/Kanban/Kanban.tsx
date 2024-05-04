@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import List from "../Board/List";
 import { card, list, listIDs } from "../types";
 import styles from "./Kanban.module.scss";
@@ -50,6 +50,43 @@ const initialData: data = {
 
 const Kanban = () => {
   const [data, setData] = useState(initialData);
+
+  const handleAddCard = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const cardTitle = formData.get("cardTitle")?.toString().trim();
+    const currentListId = e.currentTarget.id as listIDs;
+    if (!cardTitle) return;
+
+    const newListOrderValueMax = data[currentListId]
+      .map((item) => item.order)
+      .reduce((maxValue, a) => Math.max(maxValue, a), 0);
+    const cardInfo: card = {
+      id: "abc" + cardTitle,
+      listID: currentListId,
+      title: cardTitle,
+      order: newListOrderValueMax + 1,
+    };
+
+    const addedList = [
+      ...data[currentListId],
+      {
+        ...cardInfo,
+        order: newListOrderValueMax + 1,
+      },
+    ]
+      .sort((a, b) => a.order - b.order)
+      .map((item, i) => {
+        return { ...item, order: i + 1 };
+      });
+
+    setData((d) => {
+      return { ...d, [currentListId]: addedList };
+    });
+
+    e.currentTarget.reset();
+  };
 
   const cardChangeHandler = (
     cardInfo: card,
@@ -125,6 +162,16 @@ const Kanban = () => {
             listID={l.listID}
             cardChangeHandler={cardChangeHandler}
           />
+
+          <form className={styles.add} onSubmit={handleAddCard} id={l.listID}>
+            <input
+              type="text"
+              id="cardTitle"
+              name="cardTitle"
+              placeholder="card title"
+            />
+            <button type="submit">Add card</button>
+          </form>
         </div>
       ))}
     </div>
